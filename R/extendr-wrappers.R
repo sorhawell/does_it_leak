@@ -24,6 +24,18 @@ implicit_double <- function(x) .Call(wrap__implicit_double, x)
 implicit_doubles <- function(x) .Call(wrap__implicit_doubles, x)
 
 #' @export
+try_implicit_string <- function(x) .Call(wrap__try_implicit_string, x)
+
+#' @export
+try_implicit_strings <- function(x) .Call(wrap__try_implicit_strings, x)
+
+#' @export
+try_implicit_double <- function(x) .Call(wrap__try_implicit_double, x)
+
+#' @export
+try_implicit_doubles <- function(x) .Call(wrap__try_implicit_doubles, x)
+
+#' @export
 unwrap_string <- function(x) .Call(wrap__unwrap_string, x)
 
 #' @export

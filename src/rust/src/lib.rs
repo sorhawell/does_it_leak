@@ -28,6 +28,34 @@ fn implicit_doubles(x: Doubles) -> String {
     x.len().to_string()
 }
 
+//IS1_t
+/// @export
+#[extendr(use_try_from = true)]
+fn try_implicit_string(x: String) -> String {
+    x.len().to_string()
+}
+
+//IS2_t
+/// @export
+#[extendr(use_try_from = true)]
+fn try_implicit_strings(x: Strings) -> String {
+    x.len().to_string()
+}
+
+//ID1_t
+/// @export
+#[extendr(use_try_from = true)]
+fn try_implicit_double(x: f64) -> String {
+    x.to_string()
+}
+
+//ID2_t
+/// @export
+#[extendr(use_try_from = true)]
+fn try_implicit_doubles(x: Doubles) -> String {
+    x.len().to_string()
+}
+
 //US1
 /// @export
 #[extendr]
@@ -103,6 +131,10 @@ extendr_module! {
     fn implicit_strings;
     fn implicit_double;
     fn implicit_doubles;
+    fn try_implicit_string;
+    fn try_implicit_strings;
+    fn try_implicit_double;
+    fn try_implicit_doubles;
     fn unwrap_string;
     fn unwrap_strings;
     fn unwrap_double;

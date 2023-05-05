@@ -2,18 +2,22 @@ rextendr::document()
 e_pkg = environment(helloextendr::error_double)
 
 fnames = c(
-  "error_double",
-  "error_doubles",
-  "error_string",
-  "error_strings", 
   "implicit_double",
   "implicit_doubles",
   "implicit_string",
   "implicit_strings", 
+  "try_implicit_double",
+  "try_implicit_doubles",
+  "try_implicit_string",
+  "try_implicit_strings",
   "unwrap_double",
   "unwrap_doubles",
   "unwrap_string",
-  "unwrap_strings"
+  "unwrap_strings",
+  "error_double",
+  "error_doubles",
+  "error_string",
+  "error_strings"
 )
 
 rust_f_list = mget(fnames,envir = e_pkg)
@@ -27,11 +31,6 @@ value_f_list = list(
   string = \() "hey mom",
   int = 42L,
   dbl = 42.42
-)
-
-n_iter_list =list(
-  iter_1 = 1,
-  iter_10 = 10
 )
 
 ##global memory
@@ -62,7 +61,7 @@ score_leak <- function(f_rust, f_value){
     out = (\() tryCatch(f_rust(f_value()), error = \(err) "ERROR"))()
   }
   glb_mem_after_10 <<- lobstr::mem_used()
-  rm(out)
+  rm(out,i)
   gc(verbose = FALSE)
   glb_mem_after_gc_10 <<- lobstr::mem_used()
   
@@ -100,5 +99,6 @@ mem_bench_table = mem_bench |>
 #compute leaksizes
 
 
-
+sink("./tests/leak_result.txt")
 print(mem_bench_table)
+sink(NULL)
