@@ -25,7 +25,7 @@ usize_add_42_blame_macro <- function(x) .Call(wrap__usize_add_42_blame_macro, x)
 
 usize_add_42_blame_macro_exotic_error <- function(x) .Call(wrap__usize_add_42_blame_macro_exotic_error, x)
 
-usize_add_42_superclass <- function(x) .Call(wrap__usize_add_42_superclass, x)
+usize_add_42_superclass <- function() .Call(wrap__usize_add_42_superclass)
 
 MyStruct <- new.env(parent = emptyenv())
 

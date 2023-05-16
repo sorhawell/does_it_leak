@@ -11,8 +11,8 @@ usize_add_42_convoluted = function(x) {
 
 
 #' @export
-usize_add_42_superclassy = function(x) {
-  helloextendr:::usize_add_42_superclass(x) |> unwrap(context = "in usize_add_42_superclassy():")
+usize_add_42_superclassy = function() {
+  helloextendr:::usize_add_42_superclass()
 }
 
 

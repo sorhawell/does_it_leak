@@ -174,20 +174,16 @@ where
         robj
     }
 }
-
 struct MyStruct(usize);
-
 #[extendr]
 impl MyStruct {
     fn print(&self) {
         rprintln!("imma MyStruct with value = {}", self.0);
     }
 }
-
 #[extendr(use_try_from = true)]
-fn usize_add_42_superclass(x: WRS<usize>) -> Result<SuperClassMe<MyStruct>, MyExoticError> {
-    let my_usize: usize = blame!(x).0? + 42;
-    Ok(SuperClassMe(MyStruct(my_usize), "my_super_class"))
+fn usize_add_42_superclass() -> SuperClassMe<MyStruct> {
+    SuperClassMe(MyStruct(42), "my_super_class")
 }
 
 // Macro to generate exports.

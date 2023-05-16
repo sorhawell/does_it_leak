@@ -14,6 +14,6 @@ usize_add_42_convoluted(-1)
 
 
 # show case SuperClassMe wrapper
-usize_add_42_superclassy(5)
+usize_add_42_superclassy()
 
                         
