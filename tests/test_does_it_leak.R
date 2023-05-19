@@ -1,23 +1,24 @@
 rextendr::document()
-e_pkg = environment(helloextendr::error_double)
+e_pkg = environment(helloextendr:::string_to_string)
 
 fnames = c(
-  "implicit_double",
-  "implicit_doubles",
-  "implicit_string",
-  "implicit_strings", 
-  "try_implicit_double",
-  "try_implicit_doubles",
-  "try_implicit_string",
-  "try_implicit_strings",
-  "unwrap_double",
-  "unwrap_doubles",
-  "unwrap_string",
-  "unwrap_strings",
-  "error_double",
-  "error_doubles",
-  "error_string",
-  "error_strings"
+  "string_to_string"
+  # "implicit_double",
+  # "implicit_doubles",
+  # "implicit_string",
+  # "implicit_strings", 
+  # "try_implicit_double",
+  # "try_implicit_doubles",
+  # "try_implicit_string",
+  # "try_implicit_strings",
+  # "unwrap_double",
+  # "unwrap_doubles",
+  # "unwrap_string",
+  # "unwrap_strings",
+  # "error_double",
+  # "error_doubles",
+  # "error_string",
+  # "error_strings"
 )
 
 rust_f_list = mget(fnames,envir = e_pkg)

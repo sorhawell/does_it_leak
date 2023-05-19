@@ -11,7 +11,7 @@
 #' @useDynLib helloextendr, .registration = TRUE
 NULL
 
-implicit_string <- function(x) .Call(wrap__implicit_string, x)
+string_to_string <- function(x) .Call(wrap__string_to_string, x)
 
 
 # nolint end
