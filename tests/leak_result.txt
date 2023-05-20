@@ -1,9 +1,9 @@
             f_name   val_name total_mem_before is_error leak_size_1 leak_size_10
-1 string_to_string big_string        122276448    FALSE      783080        224.0
-2 string_to_string big_chrvec        123062424     TRUE         120        271.2
-3 string_to_string big_intvec        123065792     TRUE         120         83.2
-4 string_to_string big_altvec        123067280     TRUE         120         64.0
-5 string_to_string big_dblvec        123068576     TRUE         120         83.2
-6 string_to_string     string        123070064    FALSE         120         54.4
-7 string_to_string        int        123071264     TRUE         120          0.0
-8 string_to_string        dbl        123071920     TRUE         120          0.0
+1 string_to_string        dbl        147446904     TRUE      -79912         4.80
+2 string_to_string        int        147367888     TRUE         120         0.00
+3 string_to_string     string        147368544    FALSE      800232        10.88
+4 string_to_string big_dblvec        148169856     TRUE         120        16.64
+5 string_to_string big_altvec        148171344     TRUE         120        12.80
+6 string_to_string big_intvec        148172640     TRUE         120        16.64
+7 string_to_string big_chrvec        148174128     TRUE         120       -42.88
+8 string_to_string big_string        148172640    FALSE         120        40.00

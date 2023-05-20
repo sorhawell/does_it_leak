@@ -23,7 +23,7 @@ fnames = c(
 
 rust_f_list = mget(fnames,envir = e_pkg)
 
-value_f_list = list(
+value_f_list = rev(list(
   big_string = \() paste(sample(letters,1E4, replace = TRUE),collapse = ""),
   big_chrvec = \() replicate(1E2,paste(sample(letters,1E2, replace = TRUE),collapse = "")),
   big_intvec = \() (1:(1E4)) - 1L,
@@ -32,7 +32,7 @@ value_f_list = list(
   string = \() "hey mom",
   int = 42L,
   dbl = 42.42
-)
+))
 
 ##global memory
 glb_i = 0
@@ -58,7 +58,7 @@ score_leak <- function(f_rust, f_value){
   
   #run 10 times
   glb_mem_before_10 <<- lobstr::mem_used()
-  for (i in 1:10) {
+  for (i in 1:50) {
     out = (\() tryCatch(f_rust(f_value()), error = \(err) "ERROR"))()
   }
   glb_mem_after_10 <<- lobstr::mem_used()
@@ -70,7 +70,7 @@ score_leak <- function(f_rust, f_value){
     total_mem_before = glb_mem_before,
     is_error = glb_is_error,
     leak_size_1  = glb_mem_after_gc -glb_mem_before,
-    leak_size_10 = (glb_mem_after_gc_10 - glb_mem_before_10) / 10
+    leak_size_10 = (glb_mem_after_gc_10 - glb_mem_before_10) / 50
   )
   
   l

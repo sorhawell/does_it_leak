@@ -28,7 +28,6 @@ pub extern "C" fn wrap__string_to_string(x: extendr_api::SEXP) -> extendr_api::S
     let z = unsafe {
         use extendr_api::robj::*;
         let _x_robj = extendr_api::new_owned(x);
-
         //safe_handle_panics is only a last guard against user induced panics!.
         let result = safe_handle_panic(
             "sry your user function panicked, not extendr.\0",
@@ -49,10 +48,19 @@ pub extern "C" fn wrap__string_to_string(x: extendr_api::SEXP) -> extendr_api::S
         result
     };
     //drop(x);
-    let zz = extendr_api::handle_panic("stuff happended", || {
-        z.expect("user error/conv").expect("user panic")
-    });
-    unsafe { zz.get() }
+    // let zz = extendr_api::handle_panic("stuff happended", || {
+    //     z.expect("user error/conv").expect("user panic")
+    // });
+    match z {
+        Ok(Ok(zz)) => {
+            return unsafe { zz.get() };
+        }
+        _ => {
+            drop(z);
+            extendr_api::throw_r_error("an error happended");
+            unreachable!("nope");
+        }
+    }
 }
 
 #[allow(non_snake_case)]
