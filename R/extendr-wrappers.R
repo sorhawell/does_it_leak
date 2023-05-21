@@ -14,50 +14,5 @@ NULL
 #' @export
 implicit_string <- function(x) .Call(wrap__implicit_string, x)
 
-#' @export
-implicit_strings <- function(x) .Call(wrap__implicit_strings, x)
-
-#' @export
-implicit_double <- function(x) .Call(wrap__implicit_double, x)
-
-#' @export
-implicit_doubles <- function(x) .Call(wrap__implicit_doubles, x)
-
-#' @export
-try_implicit_string <- function(x) .Call(wrap__try_implicit_string, x)
-
-#' @export
-try_implicit_strings <- function(x) .Call(wrap__try_implicit_strings, x)
-
-#' @export
-try_implicit_double <- function(x) .Call(wrap__try_implicit_double, x)
-
-#' @export
-try_implicit_doubles <- function(x) .Call(wrap__try_implicit_doubles, x)
-
-#' @export
-unwrap_string <- function(x) .Call(wrap__unwrap_string, x)
-
-#' @export
-unwrap_strings <- function(x) .Call(wrap__unwrap_strings, x)
-
-#' @export
-unwrap_double <- function(x) .Call(wrap__unwrap_double, x)
-
-#' @export
-unwrap_doubles <- function(x) .Call(wrap__unwrap_doubles, x)
-
-#' @export
-error_string <- function(x) .Call(wrap__error_string, x)
-
-#' @export
-error_strings <- function(x) .Call(wrap__error_strings, x)
-
-#' @export
-error_double <- function(x) .Call(wrap__error_double, x)
-
-#' @export
-error_doubles <- function(x) .Call(wrap__error_doubles, x)
-
 
 # nolint end
