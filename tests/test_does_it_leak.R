@@ -1,5 +1,5 @@
 rextendr::document()
-e_pkg = environment(helloextendr::error_double)
+e_pkg = environment(helloextendr:::implicit_string)
 
 fnames = c(
   "implicit_double",
