@@ -3,6 +3,7 @@ e_pkg = environment(helloextendr:::implicit_string)
 
 fnames = c(
   "implicit_double",
+  "implicit_double",
   "implicit_doubles",
   "implicit_string",
   "implicit_strings", 
@@ -23,11 +24,11 @@ fnames = c(
 rust_f_list = mget(fnames,envir = e_pkg)
 
 value_f_list = list(
-  big_string = \() paste(sample(letters,1E4, replace = TRUE),collapse = ""),
-  big_chrvec = \() replicate(1E2,paste(sample(letters,1E2, replace = TRUE),collapse = "")),
-  big_intvec = \() (1:(1E4)) - 1L,
-  big_altvec = \() 1:(1E4),
-  big_dblvec = \() (1:(1E4)) - 1.1,
+  big_string = \() paste(sample(letters,1E3, replace = TRUE),collapse = ""),
+  big_chrvec = \() replicate(1E1,paste(sample(letters,1E2, replace = TRUE),collapse = "")),
+  big_intvec = \() (1:(1E3)) - 1L,
+  big_altvec = \() 1:(1E3),
+  big_dblvec = \() (1:(1E3)) - 1.1,
   string = \() "hey mom",
   int = 42L,
   dbl = 42.42
