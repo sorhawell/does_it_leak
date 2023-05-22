@@ -5,7 +5,8 @@ version = 3
 [[package]]
 name = "extendr-api"
 version = "0.4.0"
-source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e36d66fa307948c291a6fc5b09d8295dd58e88ab5e8d782d30e23670113e9ab"
 dependencies = [
  "extendr-engine",
  "extendr-macros",
@@ -17,7 +18,8 @@ dependencies = [
 [[package]]
 name = "extendr-engine"
 version = "0.4.0"
-source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8298d5a2e38bb91820b92bbd7e5aaf1d3b95ed9f096fc66393c50af38ff8155d"
 dependencies = [
  "libR-sys",
 ]
@@ -25,7 +27,8 @@ dependencies = [
 [[package]]
 name = "extendr-macros"
 version = "0.4.0"
-source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09bf0849f0d48209be8163378248137fed5ccb5f464d171cf93a19f31a9e6c67"
 dependencies = [
  "proc-macro2",
  "quote",
