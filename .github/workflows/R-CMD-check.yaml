@@ -51,7 +51,15 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rcmdcheck ,devtools, lobstr
+          extra-packages: |
+            rcmdcheck
+            devtools
+            lobstr
+            
+      - name: run leak test outside check to print
+        run: |
+         source("./tests/test_does_it_leak.R");
+        shell: Rscript {0}
           
       - uses: r-lib/actions/check-r-package@v2
         with:

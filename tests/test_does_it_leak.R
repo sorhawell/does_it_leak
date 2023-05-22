@@ -1,17 +1,23 @@
+library(helloextendr)
+library(lobstr)
+
 e_pkg = environment(helloextendr:::implicit_string)
 
 fnames = c(
   
   "implicit_double",# single burn-in function
-  "arg2_try_implicit_double",
-  "arg2_try_implicit_doubles",
-  "arg2_try_implicit_string",
-  "arg2_try_implicit_strings",
+  
   "implicit_double",
   "implicit_double",
   "implicit_doubles",
   "implicit_string",
   "implicit_strings",
+  
+  "arg2_try_implicit_double",
+  "arg2_try_implicit_doubles",
+  "arg2_try_implicit_string",
+  "arg2_try_implicit_strings",
+  
   "try_implicit_double",
   "try_implicit_doubles",
   "try_implicit_string",
@@ -56,6 +62,9 @@ score_leak <- function(f_rust, f_value){
   cat(glb_i<<-glb_i+1,", ",sep="")
   glb_mem_before <<- lobstr::mem_used()
   
+  print(f_rust)
+  print(f_value)
+  
   out = (\() tryCatch({
       if(length(formals(f_rust))>1 ) {
         f_rust(rnorm(1E3),f_value())
@@ -72,6 +81,7 @@ score_leak <- function(f_rust, f_value){
   #run 10 times
   glb_mem_before_10 <<- lobstr::mem_used()
   for (i in 1:10) {
+    cat(".")
     out = (\() tryCatch({
       if(length(formals(f_rust))>1 ) {
         f_rust(rnorm(1E4),f_value())
@@ -120,7 +130,7 @@ mem_bench =
 #gather results
 mem_bench_table = mem_bench |>
   flatten() |>
-  do.call(rbind, args = _) |>
+  (\(x) do.call(rbind, args = x))() |>
   data.frame() |>
   unlist_elements()
 
