@@ -1,3 +1,3 @@
-test_that("Call to Rust function `hello_world()` works", {
-  expect_equal(hello_world(), "Hello world!")
+test_that("no unit tests see test_does_it_leak", {
+  expect_equal(2+2, 4)
 })

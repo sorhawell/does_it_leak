@@ -1,15 +1,28 @@
-rextendr::document()
-e_pkg = environment(helloextendr::error_double)
+library(helloextendr)
+library(lobstr)
+
+e_pkg = environment(helloextendr:::implicit_string)
 
 fnames = c(
+  
+  "implicit_double",# single burn-in function
+  
+  "implicit_double",
   "implicit_double",
   "implicit_doubles",
   "implicit_string",
-  "implicit_strings", 
+  "implicit_strings",
+  
+  "arg2_try_implicit_double",
+  "arg2_try_implicit_doubles",
+  "arg2_try_implicit_string",
+  "arg2_try_implicit_strings",
+  
   "try_implicit_double",
   "try_implicit_doubles",
   "try_implicit_string",
   "try_implicit_strings",
+
   "unwrap_double",
   "unwrap_doubles",
   "unwrap_string",
@@ -19,15 +32,15 @@ fnames = c(
   "error_string",
   "error_strings"
 )
-
 rust_f_list = mget(fnames,envir = e_pkg)
+names(rust_f_list)[1] = "burn_in_test" #rename burn-in
 
 value_f_list = list(
-  big_string = \() paste(sample(letters,1E4, replace = TRUE),collapse = ""),
-  big_chrvec = \() replicate(1E2,paste(sample(letters,1E2, replace = TRUE),collapse = "")),
-  big_intvec = \() (1:(1E4)) - 1L,
-  big_altvec = \() 1:(1E4),
-  big_dblvec = \() (1:(1E4)) - 1.1,
+  big_string = \() paste(sample(letters,1E3, replace = TRUE),collapse = ""),
+  big_chrvec = \() replicate(1E1,paste(sample(letters,1E2, replace = TRUE),collapse = "")),
+  big_intvec = \() (1:(1E3)) - 1L,
+  big_altvec = \() 1:(1E3),
+  big_dblvec = \() (1:(1E3)) - 1.1,
   string = \() "hey mom",
   int = 42L,
   dbl = 42.42
@@ -48,7 +61,17 @@ score_leak <- function(f_rust, f_value){
   
   cat(glb_i<<-glb_i+1,", ",sep="")
   glb_mem_before <<- lobstr::mem_used()
-  out = (\() tryCatch(f_rust(f_value()), error = \(err) "ERROR"))()
+  
+  print(f_rust)
+  print(f_value)
+  
+  out = (\() tryCatch({
+      if(length(formals(f_rust))>1 ) {
+        f_rust(rnorm(1E3),f_value())
+      } else {
+        f_rust(f_value())
+      }
+    }, error = \(err) "ERROR"))()
   glb_mem_after <<- lobstr::mem_used()
   glb_is_error <<- isTRUE(out == "ERROR")
   rm(out)
@@ -58,7 +81,14 @@ score_leak <- function(f_rust, f_value){
   #run 10 times
   glb_mem_before_10 <<- lobstr::mem_used()
   for (i in 1:10) {
-    out = (\() tryCatch(f_rust(f_value()), error = \(err) "ERROR"))()
+    cat(".")
+    out = (\() tryCatch({
+      if(length(formals(f_rust))>1 ) {
+        f_rust(rnorm(1E4),f_value())
+      } else {
+        f_rust(f_value())
+      }
+    }, error = \(err) "ERROR"))()
   }
   glb_mem_after_10 <<- lobstr::mem_used()
   rm(out,i)
@@ -80,6 +110,13 @@ zip_names = \(x) zip(x, names(x))
 flatten = \(x) do.call(c,x)
 unlist_elements = \(x) {x[]=lapply(x,unlist);x}
 
+#capture error messages, because large inputs spam the log
+try(unlink("errout.txt"))
+con = textConnection("errout.txt")
+sink(file =con, append = FALSE, type = c("message"),split = FALSE)
+
+
+#perform benchmark
 mem_bench = 
     lapply(zip_names(rust_f_list), \(f_rust)  {
       lapply(zip_names(value_f_list), \(f_val) {
@@ -90,15 +127,22 @@ mem_bench =
       })
     })
 
+#gather results
 mem_bench_table = mem_bench |>
   flatten() |>
-  do.call(rbind, args = _) |>
+  (\(x) do.call(rbind, args = x))() |>
   data.frame() |>
   unlist_elements()
 
-#compute leaksizes
 
+#stop divert err msg
+sink(NULL, type = c("message"))
 
-sink("./tests/leak_result.txt")
-print(mem_bench_table)
+#print result for log
+print(mem_bench_table[,c("f_name", "val_name", "total_mem_before", "is_error", "leak_size_10")], max=9999)
+
+#write to file
+sink("../leak_result.txt")
+print(mem_bench_table, max=9999)
 sink(NULL)
+
