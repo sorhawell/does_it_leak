@@ -5,6 +5,7 @@ version = 3
 [[package]]
 name = "extendr-api"
 version = "0.4.0"
+source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
 dependencies = [
  "extendr-engine",
  "extendr-macros",
@@ -16,6 +17,7 @@ dependencies = [
 [[package]]
 name = "extendr-engine"
 version = "0.4.0"
+source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
 dependencies = [
  "libR-sys",
 ]
@@ -23,6 +25,7 @@ dependencies = [
 [[package]]
 name = "extendr-macros"
 version = "0.4.0"
+source = "git+https://github.com/sorhawell/extendr/?branch=try_fix_leak#8b82610031f24c1a4bbe0a131356b05a686f006b"
 dependencies = [
  "proc-macro2",
  "quote",
