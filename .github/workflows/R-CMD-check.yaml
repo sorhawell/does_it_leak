@@ -58,6 +58,7 @@ jobs:
             
       - name: run leak test outside check to print
         run: |
+         devtools::install();
          source("./tests/test_does_it_leak.R");
         shell: Rscript {0}
           
