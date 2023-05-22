@@ -139,7 +139,7 @@ mem_bench_table = mem_bench |>
 sink(NULL, type = c("message"))
 
 #print result for log
-print(mem_bench_table, max=9999)
+print(mem_bench_table[,c("f_name", "val_name", "total_mem_before", "is_error", "leak_size_10")], max=9999)
 
 #write to file
 sink("../leak_result.txt")
