@@ -15,15 +15,9 @@ MyClass <- new.env(parent = emptyenv())
 
 MyClass$new <- function() .Call(wrap__MyClass__new)
 
-MyClass$show <- function(s) invisible(.Call(wrap__MyClass__show, s))
-
-MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) invisible(.Call(wrap__MyClass__usize_implicit_conversion_implicit_errorhandling, x))
+MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_implicit_errorhandling, x)
 
 MyClass$usize_implicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_explicit_errorhandling, x)
-
-MyClass$usize_explicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_explicit_conversion_explicit_errorhandling, x)
-
-MyClass$usize_manually <- function(s) .Call(wrap__MyClass__usize_manually, s)
 
 #' @export
 `$.MyClass` <- function (self, name) { func <- MyClass[[name]]; environment(func) <- environment(); func }

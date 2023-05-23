@@ -1,8 +1,9 @@
 use extendr_api::prelude::*;
 
-use crate::conversion as convert;
+use crate::{conversion as convert, MyClass};
 
 // simple wrapper and all from-into conversions
+#[derive(Debug)]
 pub struct Uobj(pub Robj);
 impl From<Robj> for Uobj {
     fn from(x: Robj) -> Self {
@@ -33,29 +34,40 @@ impl Uobj {
     }
 }
 
-// impl<T, E> From<std::result::Result<T, E>> for Uobj
-// where
-//     T: Into<Robj>,
-//     E: Into<Robj>,
-// {
-//     fn from(res: std::result::Result<T, E>) -> Self {
-//         match res {
-//             Ok(x) => List::from_names_and_values(&["ok", "err"], &[x.into(), NULL.into()]),
-//             Err(x) => {
-//                 let err_robj = x.into();
-//                 if err_robj.is_null() {
-//                     panic!("Internal error: result_list not allowed to return NULL as err-value")
-//                 }
-//                 List::from_names_and_values(&["ok", "err"], &[NULL.into(), err_robj])
-//             }
-//         }
-//         //can only imagine this would ever fail due memory allcation error, but then panicking is the right choice
-//         .expect("Internal error: failed to create an R list")
-//         .set_class(&["extendr_result"])
-//         .expect("Internal error: failed to set class")
-//         .into()
-//     }
-// }
+impl From<i32> for Uobj {
+    fn from(x: i32) -> Self {
+        Robj::from(x).into()
+    }
+}
+
+impl From<MyClass> for Uobj {
+    fn from(x: MyClass) -> Self {
+        Robj::from(x).into()
+    }
+}
+impl<T, E> From<std::result::Result<T, E>> for Uobj
+where
+    T: Into<Robj>,
+    E: Into<Robj>,
+{
+    fn from(res: std::result::Result<T, E>) -> Self {
+        match res {
+            Ok(x) => List::from_names_and_values(&["ok", "err"], &[x.into(), NULL.into()]),
+            Err(x) => {
+                let err_robj = x.into();
+                if err_robj.is_null() {
+                    panic!("Internal error: result_list not allowed to return NULL as err-value")
+                }
+                List::from_names_and_values(&["ok", "err"], &[NULL.into(), err_robj])
+            }
+        }
+        //can only imagine this would ever fail due memory allcation error, but then panicking is the right choice
+        .expect("Internal error: failed to create an R list")
+        .set_class(&["extendr_result"])
+        .expect("Internal error: failed to set class")
+        .into()
+    }
+}
 
 // generic wrap conversions, derived from Uobj because it is already there
 pub struct Wrap<T>(pub T);
