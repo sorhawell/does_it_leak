@@ -11,17 +11,25 @@
 #' @useDynLib helloextendr, .registration = TRUE
 NULL
 
-BobbyJoeString <- new.env(parent = emptyenv())
+MyClass <- new.env(parent = emptyenv())
 
-BobbyJoeString$new <- function() .Call(wrap__BobbyJoeString__new)
+MyClass$new <- function() .Call(wrap__MyClass__new)
 
-BobbyJoeString$print <- function() invisible(.Call(wrap__BobbyJoeString__print, self))
+MyClass$show <- function(s) invisible(.Call(wrap__MyClass__show, s))
+
+MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) invisible(.Call(wrap__MyClass__usize_implicit_conversion_implicit_errorhandling, x))
+
+MyClass$usize_implicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_explicit_errorhandling, x)
+
+MyClass$usize_explicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_explicit_conversion_explicit_errorhandling, x)
+
+MyClass$usize_manually <- function(s) .Call(wrap__MyClass__usize_manually, s)
 
 #' @export
-`$.BobbyJoeString` <- function (self, name) { func <- BobbyJoeString[[name]]; environment(func) <- environment(); func }
+`$.MyClass` <- function (self, name) { func <- MyClass[[name]]; environment(func) <- environment(); func }
 
 #' @export
-`[[.BobbyJoeString` <- `$.BobbyJoeString`
+`[[.MyClass` <- `$.MyClass`
 
 
 # nolint end

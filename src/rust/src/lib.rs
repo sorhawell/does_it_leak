@@ -1,101 +1,57 @@
+pub mod conversion; // set of oppionated conversion functions, derived from Robj-api
+pub mod uobj; // zero-cost abstraction, cherry-pick/override extendr traits
+
+use conversion as convert;
+
 use extendr_api::prelude::*;
+pub use uobj::*; //bring  Uobj traits into context of macro expansions
 
 #[derive(Clone)]
-struct MyString {
+struct MyClass {
     pub s: i32,
 }
 
-pub struct Uobj(Robj);
-impl From<Robj> for Uobj {
-    fn from(x: Robj) -> Self {
-        Uobj(x)
-    }
-}
-impl From<Uobj> for Robj {
-    fn from(x: Uobj) -> Self {
-        x.0
-    }
-}
-
-impl From<&Robj> for &Uobj {
-    fn from(x: &Robj) -> Self {
-        let y: &Uobj = unsafe { std::mem::transmute(x) }; // it is a tupple struct
-        y
-    }
-}
-
-impl TryFrom<Uobj> for String {
-    type Error = extendr_api::error::Error;
-    fn try_from(x: Uobj) -> std::result::Result<Self, Error> {
-        Ok(x.0.as_str().unwrap().to_string())
-    }
-}
-
-impl TryFrom<&Uobj> for &str {
-    type Error = Error;
-    fn try_from(robj: &Uobj) -> extendr_api::Result<Self> {
-        let robj = &robj.0; //SOREN comment unpack
-        if robj.is_na() {
-            return Err(Error::MustNotBeNA(robj.clone()));
-        }
-        match robj.len() {
-            0 => Err(Error::ExpectedNonZeroLength(robj.clone())),
-            1 => {
-                if let Some(s) = robj.as_str() {
-                    Ok(s)
-                } else {
-                    Err(Error::ExpectedString(robj.clone()))
-                }
-            }
-            _ => Err(Error::ExpectedScalar(robj.clone())),
-        }
-    }
-}
-
-//converted from extendr try_from_robj.rs
-impl TryFrom<&Uobj> for String {
-    type Error = Error;
-    fn try_from(uobj: &Uobj) -> Result<Self> {
-        <&str>::try_from(uobj).map(|s| s.to_string())
-    }
-}
-
-// fn user_func(robj: Robj) -> Robj {
-//     robj
-// }
-
-#[extendr(r_class_name = "BobbyJoeString", r_super_class_name = "AmericanString")]
-impl MyString {
-    pub fn new() -> MyString {
-        MyString { s: 42 }
-    }
-    pub fn print(&self) {
-        println!("mystring is {}", &self.s);
+#[extendr(dep_inject = "Uobj")] //zero-cost abstraction, cherry-pick/override extendr traits
+impl MyClass {
+    pub fn new() -> MyClass {
+        MyClass { s: 42 }
     }
 
-    pub fn show(s: String) -> () {
+    // THIS ONE IS NEW due to (dep_inject =  "Uobj")/
+    // extend an extendr conversion to print "Hello Converter World" during conversions
+    pub fn show(s: String) {
         println!("{}", s);
     }
-}
 
-pub trait FromUobj: Sized {
-    // Convert an incomming Robj from R into a value or an error.
-    fn from_uobj(_robj: Uobj) -> std::result::Result<Self, String> {
-        Err("unable to convert value from R object".into())
+    // THIS ONE IS NEW due to (dep_inject =  "Uobj")
+    // introduce native usize conversion in extendr, foreign rule is not a problem because user owns Uobj
+    pub fn usize_implicit_conversion_implicit_errorhandling(x: usize) {
+        println!("this usize is {}", x);
+    }
+
+    // via generic trait wrapper pattern
+    pub fn usize_implicit_conversion_explicit_errorhandling(x: Wrap<Result<usize>>) -> Result<()> {
+        println!("this usize is {}", x.0?); // must explicitly handle errors
+        Ok(())
+    }
+
+    // via wrapper struct pattern
+    pub fn usize_explicit_conversion_explicit_errorhandling(x: Uobj) -> Result<()> {
+        let x: usize = x.try_into()?;
+        println!("this usize is {}", x);
+        Ok(())
+    }
+
+    //manually Robj not involving Uobj
+    pub fn usize_manually(s: Robj) -> Result<()> {
+        let s: Result<usize> =
+            convert::robj_to_usize(s).map_err(|err| extendr_api::error::Error::Other(err));
+        println!("this usize is {}", s?);
+        Ok(())
     }
 }
 
-// impl FromUobj for MyString {
-//     fn from_uobj(uobj: Uobj) -> std::result::Result<Self, String> {
-//         let robj = &uobj.0;
-//         MyString::from_robj(robj)
-//     }
-// }
-
-// Macro to generate exports.
-// This ensures exported functions are registered with R.
-// See corresponding C code in `entrypoint.c`.
 extendr_module! {
     mod helloextendr;
-    impl BobbyJoeString;
+    impl MyClass;
 }
