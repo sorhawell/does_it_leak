@@ -1,5 +1,6 @@
-pub mod conversion; // set of oppionated conversion functions, derived from Robj-api
+pub mod conversion; // some random set of oppionated conversion functions, derived from Robj-api
 pub mod uobj; // zero-cost abstraction, cherry-pick/override extendr traits
+pub use either::*;
 
 use conversion as convert;
 
@@ -11,20 +12,30 @@ struct MyClass {
     pub my_i32: i32,
 }
 
-#[extendr(dep_inject = "Uobj")] //zero-cost abstraction, cherry-pick/override extendr traits
+// COMMENT 1: this uobj pattern does not need PR473 to avoid throwing errors and choose result encodings.
+// The user can just  redefine `impl<T, E> TryFrom<std::result::Result<T, E>> for Uobj` in uobj.rs
+
+// COMMENT 2: if the user themselves wanted to implement something like Either<left,right>
+// they could just add the trait to uobj.rs
+
+#[extendr(dep_inject = "Uobj")] //COMMENT 4 inject zero-cost abstraction to modify any Robj conversion trait
 impl MyClass {
     pub fn new() -> MyClass {
         MyClass { my_i32: 42 }
     }
-
-    // THIS ONE IS NEW due to (dep_inject =  "Uobj")
+    // COMMENT 5: THIS ONE IS NEW due to (dep_inject =  "Uobj")
     // introduce native usize conversion in extendr, foreign rule is not a problem because user owns Uobj
-    pub fn usize_implicit_conversion_implicit_errorhandling(x: usize) -> i32 {
+    // performs implicit conversion error handling, err msg writing, but all customizable via uobj.rs -traits
+    pub fn usize_implicit_conversion_implicit_errorhandling(x: usize) {
         println!("this usize is {}", x);
-        32
     }
 
-    // via generic trait wrapper pattern
+    // COMMENT 6: A user could implement extendr either functionality by adding 15 lines to their uobj.rs
+    pub fn show_case_user_either(x: Either<i32, usize>) {
+        println!("this usize or String is {:?}", x);
+    }
+
+    // via generic trait wrapper pattern, implicit conversion, but explicit error handling and error msg writing.
     pub fn usize_implicit_conversion_explicit_errorhandling(x: Wrap<Result<usize>>) -> Result<()> {
         println!(
             "this usize is {}",
@@ -42,7 +53,7 @@ impl MyClass {
         Ok(())
     }
 
-    //manually Robj not involving Uobj at all
+    // manually Robj not involving Uobj at all
     pub fn usize_manually(x: Robj) -> Result<()> {
         let x: Result<usize> = convert::robj_to_usize(x).map_err(|err| {
             extendr_api::error::Error::Other(format!(

@@ -15,7 +15,7 @@ MyClass <- new.env(parent = emptyenv())
 
 MyClass$new <- function() .Call(wrap__MyClass__new)
 
-MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_implicit_errorhandling, x)
+MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) invisible(.Call(wrap__MyClass__usize_implicit_conversion_implicit_errorhandling, x))
 
 MyClass$usize_implicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_explicit_errorhandling, x)
 

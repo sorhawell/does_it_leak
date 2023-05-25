@@ -9,3 +9,4 @@ name = 'helloextendr'
 
 [dependencies]
 extendr-api = {path = "../../../extendr_rpolars/extendr-api/"}
+either = "*"

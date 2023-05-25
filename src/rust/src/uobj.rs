@@ -28,17 +28,21 @@ impl From<&Uobj> for &Robj {
     }
 }
 
+// Comment a Uobj currently must implemnet the method blame. It is used to write-up error messages
+// which will mention what param had a failed conversion.
 impl Uobj {
     pub fn blame(err: Box<dyn std::fmt::Display>, arg: &str) -> String {
         format!("when converting [{}] {}", arg, err.to_string())
     }
 }
 
+
 impl From<i32> for Uobj {
     fn from(x: i32) -> Self {
         Robj::from(x).into()
     }
 }
+
 
 impl From<()> for Uobj {
     fn from(x: ()) -> Self {
@@ -53,27 +57,44 @@ impl From<MyClass> for Uobj {
 }
 
 // The user can define how any result should be return to R
-impl<T, E> From<std::result::Result<T, E>> for Uobj
+// impl<T, E> From<std::result::Result<T, E>> for Uobj
+// where
+//     T: Into<Robj>,
+//     E: std::fmt::Display,
+// {
+//     fn from(res: std::result::Result<T, E>) -> Self {
+//         match res {
+//             Ok(x) => List::from_names_and_values(&["ok", "err"], &[x.into(), NULL.into()]),
+//             Err(x) => {
+//                 let err_robj: Robj = x.to_string().into();
+//                 if err_robj.is_null() {
+//                     panic!("Internal error: result_list not allowed to return NULL as err-value")
+//                 }
+//                 List::from_names_and_values(&["ok", "err"], &[NULL.into(), err_robj])
+//             }
+//         }
+//         //can only imagine this would ever fail due memory allcation error, but then panicking is the right choice
+//         .expect("Internal error: failed to create an R list")
+//         .set_class(&["extendr_result"])
+//         .expect("Internal error: failed to set class")
+//         .into()
+//     }
+// }
+
+//The user can define how any result should be return to R
+impl<T, E> TryFrom<std::result::Result<T, E>> for Uobj
 where
-    T: Into<Robj>,
-    E: std::fmt::Display,
+    T: Into<Uobj>,
+    E: Into<Box<dyn std::error::Error>>,
 {
-    fn from(res: std::result::Result<T, E>) -> Self {
+    type Error = Box<dyn std::error::Error>;
+    fn try_from(
+        res: std::result::Result<T, E>,
+    ) -> std::result::Result<Self, Box<dyn std::error::Error>> {
         match res {
-            Ok(x) => List::from_names_and_values(&["ok", "err"], &[x.into(), NULL.into()]),
-            Err(x) => {
-                let err_robj: Robj = x.to_string().into();
-                if err_robj.is_null() {
-                    panic!("Internal error: result_list not allowed to return NULL as err-value")
-                }
-                List::from_names_and_values(&["ok", "err"], &[NULL.into(), err_robj])
-            }
+            Ok(ok) => Ok(ok.into()),
+            Err(err) => Err(err.into()),
         }
-        //can only imagine this would ever fail due memory allcation error, but then panicking is the right choice
-        .expect("Internal error: failed to create an R list")
-        .set_class(&["extendr_result"])
-        .expect("Internal error: failed to set class")
-        .into()
     }
 }
 
@@ -118,5 +139,57 @@ impl TryFrom<Uobj> for usize {
     type Error = Error;
     fn try_from(uobj: Uobj) -> Result<Self> {
         Ok(convert::robj_to_usize(uobj.0)?) //? to convert error-type.
+    }
+}
+
+use crate::{Error, Robj};
+use either::*;
+
+impl<'a, L, R> TryFrom<&'a Uobj> for Either<L, R>
+where
+    L: TryFrom<&'a Uobj, Error = Error>,
+    R: TryFrom<&'a Uobj, Error = Error>,
+{
+    type Error = Error;
+
+    /// Returns the first type that matches the provided `Uobj`, starting from
+    /// `L`-type, and if that fails, then the `R`-type is converted.
+    fn try_from(value: &'a Uobj) -> Result<Self> {
+        match L::try_from(value) {
+            Ok(left) => Ok(Left(left)),
+            Err(left_err) => match R::try_from(value) {
+                Ok(right) => Ok(Right(right)),
+                Err(right_err) => Err(Error::Other(format!(
+                    "either error {:?} and {:?}",
+                    right_err, left_err
+                ))),
+            },
+        }
+    }
+}
+
+impl<L, R> TryFrom<Uobj> for Either<L, R>
+where
+    for<'a> Either<L, R>: TryFrom<&'a Uobj, Error = Error>,
+{
+    type Error = Error;
+
+    /// Returns the first type that matches the provided `Uobj`, starting from
+    /// `L`-type, and if that fails, then the `R`-type is converted.
+    fn try_from(value: Uobj) -> Result<Self> {
+        (&value).try_into()
+    }
+}
+
+
+impl<L, R> From<Either<L, R>> for Uobj
+where
+    Uobj: From<L> + From<R>,
+{
+    fn from(value: Either<L, R>) -> Self {
+        match value {
+            Left(left) => Uobj::from(left),
+            Right(right) => Uobj::from(right),
+        }
     }
 }
