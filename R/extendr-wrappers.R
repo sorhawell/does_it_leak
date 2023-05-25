@@ -19,6 +19,10 @@ MyClass$usize_implicit_conversion_implicit_errorhandling <- function(x) .Call(wr
 
 MyClass$usize_implicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_implicit_conversion_explicit_errorhandling, x)
 
+MyClass$usize_explicit_conversion_explicit_errorhandling <- function(x) .Call(wrap__MyClass__usize_explicit_conversion_explicit_errorhandling, x)
+
+MyClass$usize_manually <- function(x) .Call(wrap__MyClass__usize_manually, x)
+
 #' @export
 `$.MyClass` <- function (self, name) { func <- MyClass[[name]]; environment(func) <- environment(); func }
 

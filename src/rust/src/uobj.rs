@@ -40,21 +40,29 @@ impl From<i32> for Uobj {
     }
 }
 
+impl From<()> for Uobj {
+    fn from(x: ()) -> Self {
+        Robj::from(x).into()
+    }
+}
+
 impl From<MyClass> for Uobj {
     fn from(x: MyClass) -> Self {
         Robj::from(x).into()
     }
 }
+
+// The user can define how any result should be return to R
 impl<T, E> From<std::result::Result<T, E>> for Uobj
 where
     T: Into<Robj>,
-    E: Into<Robj>,
+    E: std::fmt::Display,
 {
     fn from(res: std::result::Result<T, E>) -> Self {
         match res {
             Ok(x) => List::from_names_and_values(&["ok", "err"], &[x.into(), NULL.into()]),
             Err(x) => {
-                let err_robj = x.into();
+                let err_robj: Robj = x.to_string().into();
                 if err_robj.is_null() {
                     panic!("Internal error: result_list not allowed to return NULL as err-value")
                 }
