@@ -1,13 +1,13 @@
 use extendr_api::prelude::*;
-
-//IS1
+use std::result::Result;
+//IS1/////////////
 /// @export
 #[extendr]
 fn implicit_string(x: String) -> String {
     x.len().to_string()
 }
 
-//IS2
+//IS2//
 /// @export
 #[extendr]
 fn implicit_strings(x: Strings) -> String {
@@ -42,17 +42,46 @@ fn try_implicit_strings(x: Strings) -> String {
     x.len().to_string()
 }
 
-//ID1_t
+//ID1_t/
 /// @export
 #[extendr(use_try_from = true)]
 fn try_implicit_double(x: f64) -> String {
     x.to_string()
 }
 
-//ID2_t
+//ID2_t/
 /// @export
 #[extendr(use_try_from = true)]
 fn try_implicit_doubles(x: Doubles) -> String {
+    x.len().to_string()
+}
+
+//--//
+//IS1_t
+/// @export
+#[extendr(use_try_from = true)]
+fn arg2_try_implicit_string(y: Doubles, x: String) -> String {
+    x.len().to_string()
+}
+
+//IS2_t
+/// @export
+#[extendr(use_try_from = true)]
+fn arg2_try_implicit_strings(y: Doubles, x: Strings) -> String {
+    x.len().to_string()
+}
+
+//ID1_t/
+/// @export
+#[extendr(use_try_from = true)]
+fn arg2_try_implicit_double(y: Doubles, x: f64) -> String {
+    x.to_string()
+}
+
+//ID2_t/
+/// @export
+#[extendr(use_try_from = true)]
+fn arg2_try_implicit_doubles(y: Doubles, x: Doubles) -> String {
     x.len().to_string()
 }
 
@@ -60,7 +89,7 @@ fn try_implicit_doubles(x: Doubles) -> String {
 /// @export
 #[extendr]
 fn unwrap_string(x: Robj) -> String {
-    let x: String = x.try_into().map_err(|_| "ERROR").unwrap();
+    let x: String = x.try_into().unwrap();
     x
 }
 
@@ -135,6 +164,10 @@ extendr_module! {
     fn try_implicit_strings;
     fn try_implicit_double;
     fn try_implicit_doubles;
+    fn arg2_try_implicit_string;
+    fn arg2_try_implicit_strings;
+    fn arg2_try_implicit_double;
+    fn arg2_try_implicit_doubles;
     fn unwrap_string;
     fn unwrap_strings;
     fn unwrap_double;

@@ -1,6 +1,7 @@
 Package: helloextendr
 Title: Minimal Example of Calling Rust from R
 Version: 0.1.0
+Depends: lobstr
 Authors@R: c(
     person("Andy", "Thomason", , "andy@andythomason.com", c("aut")),
     person("Claus O.", "Wilke", , "wilke@austin.utexas.edu", c("aut", "cre"),
